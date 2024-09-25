@@ -1,5 +1,5 @@
 const express = require('express');
-const sql = require('mssql');
+const sql = require('mysql2');
 const bodyParser = require('body-parser');
 const jwt = require('jsonwebtoken');
 const argon2 = require('argon2'); // Remplacement de bcryptjs par argon2
@@ -10,52 +10,25 @@ app.use(bodyParser.json());
 
 // Configuration SQL Server
 const dbConfig = {
-  user: 'your_username',
-  password: 'your_password',
-  server: 'your_server',
-  database: 'your_database',
+  user: 'user',
+  password: '16052002Ad@m',
+  host: 'db',
+  database: 'db',
+  port: 3306,
 };
 
-// Connexion à SQL Server
-sql.connect(dbConfig)
-  .then((pool) => {
-    console.log('Connected to SQL Server');
+const db = sql.createConnection(dbConfig);
 
-    // Route pour récupérer tous les modèles
-    app.get('/models', async (req, res) => {
-      try {
-        const result = await pool.request().query('SELECT * FROM Models');
-        res.json(result.recordset);
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
-    });
+db.connect((err) => {
+  if (err) {
+    console.error('Erreur de connexion à la base de données: ' + err.stack);
+    return;
+  }
 
-    // Route pour ajouter un modèle
-    app.post('/models', async (req, res) => {
-      const { name, description, pUHT, gamme } = req.body;
+  console.log('Connexion à la base de données réussie');
+});
 
-      // Validation des champs obligatoires
-      if (!name || !description || !pUHT || !gamme) {
-        return res.status(400).json({ message: 'Tous les champs sont obligatoires' });
-      }
 
-      try {
-        await pool
-          .request()
-          .input('name', sql.VarChar, name)
-          .input('description', sql.VarChar, description)
-          .input('pUHT', sql.Decimal, pUHT)
-          .input('gamme', sql.VarChar, gamme)
-          .query('INSERT INTO Models (name, description, pUHT, gamme) VALUES (@name, @description, @pUHT, @gamme)');
-
-        res.status(201).json({ message: 'Modèle créé avec succès' });
-      } catch (error) {
-        res.status(500).json({ error: error.message });
-      }
-    });
-  })
-  .catch((error) => console.error('SQL Server connection error:', error));
 
 // Middleware d'authentification JWT
 const authenticateToken = (req, res, next) => {
@@ -78,7 +51,7 @@ app.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   try {
-    const userResult = await sql.query(`SELECT * FROM Users WHERE username = '${username}'`);
+    const userResult = await db.query(`SELECT * FROM Users WHERE username = '${username}'`);
     const user = userResult.recordset[0];
 
     if (user && await argon2.verify(user.password, password)) { // Vérification du mot de passe avec Argon2
@@ -99,7 +72,7 @@ app.get('/models', authenticateToken, async (req, res) => {
   }
 
   try {
-    const result = await sql.query('SELECT * FROM Models');
+    const result = await db.query('SELECT * FROM Models');
     res.json(result.recordset);
   } catch (error) {
     res.status(500).json({ error: error.message });
