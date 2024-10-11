@@ -1,10 +1,11 @@
 {
   "name": "killer-bee-back",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js"
+    "start:dev": "NODE_ENV=dev nodemon server.js",
+    "start:prod": "NODE_ENV=prod node server.js"
   },
   "keywords": [],
   "author": "",
@@ -13,8 +14,20 @@
   "dependencies": {
     "argon2": "^0.41.1",
     "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "express": "^4.21.0",
+    "express-session": "^1.18.0",
+    "ip": "^2.0.1",
     "jsonwebtoken": "^9.0.2",
-    "mysql2": "^3.11.3"
+    "mysql": "^2.18.1",
+    "mysql2": "^3.11.3",
+    "passport": "^0.7.0",
+    "passport-azure-ad": "^4.3.5",
+    "pino": "^9.4.0",
+    "pino-pretty": "^11.2.2"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }
