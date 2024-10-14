@@ -9,7 +9,7 @@ CREATE TABLE IF NOT EXISTS `modele_freezbee` (
   `Nom` VARCHAR(255) NOT NULL,
   `Description` TEXT,
   `PUHT` DECIMAL(10, 2) NOT NULL,
-  `Gamme` VARCHAR(255),
+  `Gamme` VARCHAR(255)
 );
 
 
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `etape` (
   `IDEtape` INT AUTO_INCREMENT PRIMARY KEY,
   `Description` TEXT,
   `ValidationTest` BOOLEAN NOT NULL,
-  `IDProcede` INT,
+  `IDProcede` INT
   FOREIGN KEY (`IDProcede`) REFERENCES `procede_fabrication`(`IDProcede`)
 );
 
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS `utilisateur` (
   `Email` VARCHAR(255) NOT NULL UNIQUE,
   `MotDePasse` VARCHAR(255) NOT NULL,
   `IDRole` INT,
-  FOREIGN KEY (`IDRole`) REFERENCES `Role`(`IDRole`)
+  FOREIGN KEY (`IDRole`) REFERENCES `role`(`IDRole`)
 );
 
 
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS `modele_freezbee_ingredient` (
 CREATE TABLE IF NOT EXISTS `procedefabrication_freezbee` (
   `IDProcede` INT,
   `IDEtape` INT,
-  'Quantite' DECIMAL(10, 2),
+  `Quantite` DECIMAL(10, 2),
   PRIMARY KEY (`IDProcede`, `IDEtape`),
   FOREIGN KEY (`IDProcede`) REFERENCES `procede_fabrication`(`IDProcede`),
   FOREIGN KEY (`IDEtape`) REFERENCES `etape`(`IDEtape`)

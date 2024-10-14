@@ -46,6 +46,20 @@ services:
     networks:
       - internalnet
 
+  front:
+    container_name: frontcontainer
+    image: anatholyb/killer-bee-front:latest
+    ports:
+      - 80:80
+    expose:
+      - 80
+    environment:
+      SERVICE_TAGS: prod
+      SERVICE_NAME: front
+    networks:
+      - internalnet
+
+
 networks:
   internalnet:
     driver: bridge
