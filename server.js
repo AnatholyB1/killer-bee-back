@@ -12,6 +12,7 @@ import ingredientRoutes from './route/ingredients.route.js';
 import procedeRoutes from './route/procede.route.js';
 import etapeRouter from './route/etapes.route.js';
 import authRouter from './route/auth.route.js';
+import  database  from './config/mysql.config.js';
 
 dotenv.config();
 
@@ -24,20 +25,35 @@ app.use(cors({ origin: '*' ,
 }));
 app.use(express.json());
 
+// Fonction pour tester la connexion à la base de données
+const testDbConnection = async () => {
+  try {
+    const connection = await database.getConnection();
+    await connection.ping();
+    logger.info('Database connection successful');
+    connection.release();
+  } catch (error) {
+    logger.error('Database connection failed:', error);
+    process.exit(1); // Arrêtez le processus si la connexion échoue
+  }
+};
 
-app.use('/models', modelRoutes);
-app.use('/users', userRoutes);
-app.use('/roles', roleRoutes);
-app.use('/ingredients', ingredientRoutes);
-app.use('/procedes', procedeRoutes);
-app.use('/etapes', etapeRouter);
-app.use('/auth', authRouter);
-app.get('/', (req, res) => res.send(new Response(HttpStatus.OK.code, HttpStatus.OK.status, 'Freezbe API, v1.0.0 - All Systems Go')));
-app.all('*', (req, res) => res.status(HttpStatus.NOT_FOUND.code)
-  .send(new Response(HttpStatus.NOT_FOUND.code, HttpStatus.NOT_FOUND.status, 'Route does not exist on the server')));
-app.listen(PORT, () => logger.info(`Server running on: ${ip.address()}:${PORT}`));
+// Testez la connexion à la base de données avant de démarrer le serveur
+testDbConnection().then(() => {
+  app.use('/models', modelRoutes);
+  app.use('/users', userRoutes);
+  app.use('/roles', roleRoutes);
+  app.use('/ingredients', ingredientRoutes);
+  app.use('/procedes', procedeRoutes);
+  app.use('/etapes', etapeRouter);
+  app.use('/auth', authRouter);
 
+  app.get('/', (req, res) => res.send(new Response(HttpStatus.OK.code, HttpStatus.OK.status, 'Freezbe API, v1.0.0 - All Systems Go')));
+  app.all('*', (req, res) => res.status(HttpStatus.NOT_FOUND.code)
+    .send(new Response(HttpStatus.NOT_FOUND.code, HttpStatus.NOT_FOUND.status, 'Route does not exist on the server')));
 
+  app.listen(PORT, () => logger.info(`Server running on: ${ip.address()}:${PORT}`));
+});
 
 
 

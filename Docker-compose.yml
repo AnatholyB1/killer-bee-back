@@ -42,7 +42,7 @@ services:
 
   front:
     container_name: frontcontainer
-    image: anatholyb/killer-bee-front:v1.0.5
+    image: anatholyb/linux_killer-bee-front:v1.0.6
     environment:
       SERVICE_TAGS: prod
       SERVICE_NAME: front
