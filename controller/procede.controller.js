@@ -53,12 +53,24 @@ export const getProcede = async (req, res) => {
   }
 
      
-        // Create procede
+// Create procede
 export const createProcede = async (req, res) => {
-    const { Nom, Description, IDModele } = req.body;
+    const { Nom, Description, IDModele, etapes } = req.body;
     logger.info(`${req.method} ${req.originalUrl}, creating procede with name ${Nom}`);
     try {
       const [results] = await database.query(QUERY.CREATE_PROCEDE, [Nom, Description, IDModele]);
+
+      if(etapes){
+        const etapePromise = etapes.map( etape =>
+      
+          database.query(QUERY.ADD_STEP_TO_PROCEDE, [results.insertId, etape])
+
+        );
+
+        await Promise.all(etapePromise);
+      }
+
+
       res.status(HttpStatus.CREATED.code)
         .send(new Response(HttpStatus.CREATED.code, HttpStatus.CREATED.status, 'Procede created', { procede: { IDProcede: results.insertId, Nom, Description, IDModele } }));
     } catch (error) {
@@ -71,10 +83,21 @@ export const createProcede = async (req, res) => {
      // Update procede
 export const updateProcede = async (req, res) => {
     const id = req.params.id;
-    const { Nom, Description, IDModele } = req.body;
+    const { Nom, Description, IDModele, etapes } = req.body;
     logger.info(`${req.method} ${req.originalUrl}, updating procede with id ${id}`);
     try {
       const [results] = await database.query(QUERY.UPDATE_PROCEDE, [Nom, Description, IDModele, id]);
+
+      if(etapes){
+        await database.query(QUERY.REMOVE_ALL_STEPS_FROM_PROCEDE, [id]);
+
+        const etapePromise = etapes.map( etape =>
+          database.query(QUERY.ADD_STEP_TO_PROCEDE, [id, etape])
+        );
+
+        await Promise.all(etapePromise);
+      }
+
       if (!results.affectedRows) {
         return res.status(HttpStatus.NOT_FOUND.code)
           .send(new Response(HttpStatus.NOT_FOUND.code, HttpStatus.NOT_FOUND.status, `Procede with id ${id} not found`));

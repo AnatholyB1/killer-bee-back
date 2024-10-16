@@ -56,12 +56,12 @@ export const getEtape = async (req, res) => {
 
     // Create etape
 export const createEtape = async (req, res) => {
-    const { Description, ValidationTest, IDProcede } = req.body;
+    const { Description, ValidationTest } = req.body;
     logger.info(`${req.method} ${req.originalUrl}, creating etape with description ${Description}`);
     try {
-      const [results] = await database.query(QUERY.CREATE_ETAPE, [Description, ValidationTest, IDProcede]);
+      const [results] = await database.query(QUERY.CREATE_ETAPE, [Description, ValidationTest]);
       res.status(HttpStatus.CREATED.code)
-        .send(new Response(HttpStatus.CREATED.code, HttpStatus.CREATED.status, 'Etape created', { etape: { IDEtape: results.insertId, Description, ValidationTest, IDProcede } }));
+        .send(new Response(HttpStatus.CREATED.code, HttpStatus.CREATED.status, 'Etape created', { etape: { IDEtape: results.insertId, Description, ValidationTest } }));
     } catch (error) {
       res.status(HttpStatus.INTERNAL_SERVER_ERROR.code)
         .send(new Response(HttpStatus.INTERNAL_SERVER_ERROR.code, HttpStatus.INTERNAL_SERVER_ERROR.status, error.message));
@@ -72,10 +72,10 @@ export const createEtape = async (req, res) => {
     // Update etape by id
 export const updateEtape = async (req, res) => {
     const id = req.params.id;
-    const { Description, ValidationTest, IDProcede } = req.body;
+    const { Description, ValidationTest } = req.body;
     logger.info(`${req.method} ${req.originalUrl}, updating etape with id ${id}`);
     try {
-      const [results] = await database.query(QUERY.UPDATE_ETAPE, [Description, ValidationTest, IDProcede, id]);
+      const [results] = await database.query(QUERY.UPDATE_ETAPE, [Description, ValidationTest ,id]);
       if (!results.affectedRows) {
         return res.status(HttpStatus.NOT_FOUND.code)
           .send(new Response(HttpStatus.NOT_FOUND.code, HttpStatus.NOT_FOUND.status, `Etape with id ${id} not found`));

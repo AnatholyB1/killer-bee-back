@@ -3,7 +3,6 @@ const QUERY = {
     GET_ALL_ETAPE: `
         SELECT * 
         FROM etape
-        JOIN procede_fabrication ON etape.IDProcede = procede_fabrication.IDProcede
     `,
     
     // Get etape by id
@@ -11,19 +10,18 @@ const QUERY = {
         SELECT * 
         FROM etape 
         WHERE IDEtape = ?
-        JOIN procede_fabrication ON etape.IDProcede = procede_fabrication.IDProcede
     `,
 
     // Create etape
     CREATE_ETAPE: `
-        INSERT INTO etape (Description, ValidationTest, IDProcede) 
-        VALUES (?, ?, ?)
+        INSERT INTO etape (Description, ValidationTest) 
+        VALUES (?, ?)
     `,
 
     // Update etape by id
     UPDATE_ETAPE: `
         UPDATE etape 
-        SET Description = ?, ValidationTest = ?, IDProcede = ? 
+        SET Description = ?, ValidationTest = ?
         WHERE IDEtape = ?
     `,
 

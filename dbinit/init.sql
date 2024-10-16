@@ -40,7 +40,6 @@ CREATE TABLE IF NOT EXISTS `etape` (
   `IDEtape` INT AUTO_INCREMENT PRIMARY KEY,
   `Description` TEXT,
   `ValidationTest` BOOLEAN NOT NULL,
-  `IDProcede` INT
   FOREIGN KEY (`IDProcede`) REFERENCES `procede_fabrication`(`IDProcede`)
 );
 
@@ -72,6 +71,7 @@ CREATE TABLE IF NOT EXISTS `utilisateur` (
 CREATE TABLE IF NOT EXISTS `modele_freezbee_ingredient` (
   `IDModele` INT,
   `IDingredient` INT,
+  `Quantite` DECIMAL(10, 2),
   PRIMARY KEY (`IDModele`, `IDingredient`),
   FOREIGN KEY (`IDModele`) REFERENCES `modele_freezbee`(`IDModele`),
   FOREIGN KEY (`IDingredient`) REFERENCES `ingredient`(`IDingredient`)
@@ -81,7 +81,6 @@ CREATE TABLE IF NOT EXISTS `modele_freezbee_ingredient` (
 CREATE TABLE IF NOT EXISTS `procedefabrication_freezbee` (
   `IDProcede` INT,
   `IDEtape` INT,
-  `Quantite` DECIMAL(10, 2),
   PRIMARY KEY (`IDProcede`, `IDEtape`),
   FOREIGN KEY (`IDProcede`) REFERENCES `procede_fabrication`(`IDProcede`),
   FOREIGN KEY (`IDEtape`) REFERENCES `etape`(`IDEtape`)
